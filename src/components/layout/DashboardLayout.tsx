@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Bell, UserCircle, ChevronDown, LogOut, Settings, Moon, Sun } from 'lucide-react';
@@ -50,7 +51,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           <h1 className="text-4xl font-bold text-[#1E4E9D]">REST</h1>
         </div>
         
-        <nav className="flex-1 p-4">
+        <nav className="flex-1 p-4 bg-[#F2F2F2]">
           <ul className="space-y-6">
             <li>
               <Link to="/" className={`flex items-center text-xl font-medium ${isActive('/')}`}>
