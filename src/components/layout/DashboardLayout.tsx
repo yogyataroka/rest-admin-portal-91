@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Bell, UserCircle, ChevronDown, LogOut, Settings, Moon, Sun } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { Button } from '@/components/ui/button';
@@ -32,6 +31,7 @@ interface DashboardLayoutProps {
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { toast } = useToast();
   const { logout, theme, toggleTheme, notifications } = useAuth();
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
@@ -47,7 +47,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       {/* Sidebar */}
       <div className="w-60 bg-blue-900 text-white flex flex-col">
         <div className="p-6">
-          <h1 className="text-4xl font-bold text-yellow-400">REST</h1>
+          <h1 className="text-4xl font-bold text-[#1E4E9D]">REST</h1>
         </div>
         
         <nav className="flex-1 p-4">
@@ -210,7 +210,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           </div>
         </header>
 
-        <main className="flex-1 p-6 overflow-auto bg-gray-50">
+        <main className="flex-1 p-6 overflow-auto bg-[#F2F2F2]">
           {children}
         </main>
         

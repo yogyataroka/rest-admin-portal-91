@@ -35,7 +35,7 @@ const Dashboard = () => {
   return (
     <DashboardLayout>
       <div>
-        <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome Back</h1>
+        <h1 className="text-3xl font-bold text-[#1E4E9D] mb-2">Welcome Back</h1>
         <p className="text-gray-600 mb-6">Welcome to REST admin dashboard</p>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -71,14 +71,14 @@ const Dashboard = () => {
         {/* Notifications Section */}
         <Card className="mb-6">
           <CardContent className="p-6">
-            <h2 className="text-xl font-medium text-gray-700 mb-4">Recent Notifications</h2>
+            <h2 className="text-xl font-medium text-[#1E4E9D] mb-4">Recent Notifications</h2>
             
             {notifications.length > 0 ? (
               <div className="space-y-3">
                 {notifications.slice(0, 5).map((notification) => (
                   <div 
                     key={notification.id} 
-                    className={`p-3 rounded-md ${notification.read ? 'bg-gray-100' : 'bg-blue-50 border-l-4 border-blue-400'}`}
+                    className={`p-3 rounded-md ${notification.read ? 'bg-gray-100' : 'bg-blue-50 border-l-4 border-[#1E4E9D]'}`}
                   >
                     <h3 className="font-medium">{notification.title}</h3>
                     <p className="text-sm text-gray-600">{notification.message}</p>
