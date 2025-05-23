@@ -71,6 +71,8 @@ const initialMembers: Member[] = [
 const Members = () => {
   const [members, setMembers] = useState<Member[]>(initialMembers);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [currentMember, setCurrentMember] = useState<Member | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     address: '',
@@ -150,38 +152,96 @@ const Members = () => {
     e.preventDefault();
     
     if (validateForm()) {
-      const newMember: Member = {
-        id: members.length + 1,
-        name: formData.name,
-        address: formData.address,
-        phone: formData.phone,
-        email: formData.email,
-        retirementDate: formData.retirementDate,
-        photo: photoPreview || undefined,
-      };
+      if (isEditMode && currentMember) {
+        // Update existing member
+        const updatedMembers = members.map(member => {
+          if (member.id === currentMember.id) {
+            return {
+              ...member,
+              name: formData.name,
+              address: formData.address,
+              phone: formData.phone,
+              email: formData.email,
+              retirementDate: formData.retirementDate,
+              photo: photoPreview || member.photo,
+            };
+          }
+          return member;
+        });
+        
+        setMembers(updatedMembers);
+        toast({
+          title: "Member Updated",
+          description: `${formData.name} has been updated successfully.`,
+        });
+      } else {
+        // Add new member
+        const newMember: Member = {
+          id: members.length + 1,
+          name: formData.name,
+          address: formData.address,
+          phone: formData.phone,
+          email: formData.email,
+          retirementDate: formData.retirementDate,
+          photo: photoPreview || undefined,
+        };
+        
+        setMembers([...members, newMember]);
+        toast({
+          title: "Success",
+          description: `${newMember.name} has been added to the members list.`,
+        });
+      }
       
-      setMembers([...members, newMember]);
-      
-      // Reset form
-      setFormData({
-        name: '',
-        address: '',
-        phone: '',
-        email: '',
-        retirementDate: '',
-        photo: null,
-      });
-      setPhotoPreview(null);
-      
-      // Close modal
-      setIsModalOpen(false);
-      
-      // Show success notification
-      toast({
-        title: "Success",
-        description: `${newMember.name} has been added to the members list.`,
-      });
+      // Reset form and close modal
+      resetFormAndCloseModal();
     }
+  };
+
+  const handleEdit = (member: Member) => {
+    setCurrentMember(member);
+    setFormData({
+      name: member.name,
+      address: member.address,
+      phone: member.phone,
+      email: member.email,
+      retirementDate: member.retirementDate,
+      photo: null,
+    });
+    setPhotoPreview(member.photo || null);
+    setIsEditMode(true);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = (id: number) => {
+    const updatedMembers = members.filter(member => member.id !== id);
+    setMembers(updatedMembers);
+    
+    toast({
+      title: "Member Deleted",
+      description: "The member has been deleted successfully.",
+      variant: "destructive",
+    });
+  };
+
+  const resetFormAndCloseModal = () => {
+    setFormData({
+      name: '',
+      address: '',
+      phone: '',
+      email: '',
+      retirementDate: '',
+      photo: null,
+    });
+    setFormErrors({
+      name: '',
+      email: '',
+      phone: '',
+    });
+    setPhotoPreview(null);
+    setCurrentMember(null);
+    setIsEditMode(false);
+    setIsModalOpen(false);
   };
 
   return (
@@ -189,7 +249,10 @@ const Members = () => {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-gray-800">Members</h1>
         <Button 
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => {
+            setIsEditMode(false);
+            setIsModalOpen(true);
+          }}
           className="bg-gray-800 hover:bg-gray-700"
         >
           + Add Members
@@ -220,12 +283,8 @@ const Members = () => {
                   <TableCell className="text-right">
                     <Button
                       variant="ghost"
-                      onClick={() => {
-                        toast({
-                          title: "Edit Member",
-                          description: "This feature is not implemented yet.",
-                        });
-                      }}
+                      onClick={() => handleEdit(member)}
+                      className="text-gray-600 hover:text-gray-900"
                     >
                       Edit
                     </Button>
@@ -237,11 +296,13 @@ const Members = () => {
         </div>
       </Card>
       
-      {/* Add Member Dialog */}
+      {/* Add/Edit Member Dialog */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold">Add Members</DialogTitle>
+            <DialogTitle className="text-xl font-bold">
+              {isEditMode ? 'Edit Member' : 'Add Members'}
+            </DialogTitle>
           </DialogHeader>
           
           <form onSubmit={handleSubmit} className="space-y-6 py-4">
@@ -331,10 +392,35 @@ const Members = () => {
               </div>
             </div>
             
-            <div className="flex justify-center">
-              <Button type="submit" className="bg-gray-700 text-white px-6">
-                Upload File
+            <div className="flex justify-between pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={resetFormAndCloseModal}
+              >
+                Cancel
               </Button>
+              
+              <div className="flex gap-2">
+                {isEditMode && (
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    onClick={() => {
+                      if (currentMember) {
+                        handleDelete(currentMember.id);
+                        resetFormAndCloseModal();
+                      }
+                    }}
+                  >
+                    Delete
+                  </Button>
+                )}
+                
+                <Button type="submit" className="bg-gray-700 text-white px-6">
+                  {isEditMode ? 'Update' : 'Upload File'}
+                </Button>
+              </div>
             </div>
           </form>
         </DialogContent>

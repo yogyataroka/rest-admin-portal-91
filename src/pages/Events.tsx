@@ -15,6 +15,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import DashboardLayout from '@/components/layout/DashboardLayout';
+import { FileText, Download } from 'lucide-react';
 
 interface Event {
   id: number;
@@ -196,6 +197,17 @@ const Events = () => {
     setIsModalOpen(false);
   };
 
+  const handleFileView = (file: { name: string; url: string }) => {
+    if (file.url !== '#') {
+      window.open(file.url, '_blank');
+    } else {
+      toast({
+        title: "File Preview",
+        description: `Viewing ${file.name}`,
+      });
+    }
+  };
+
   return (
     <DashboardLayout>
       <div className="flex justify-between items-center mb-6">
@@ -220,6 +232,7 @@ const Events = () => {
                 <TableHead>Date</TableHead>
                 <TableHead>Location</TableHead>
                 <TableHead>Description</TableHead>
+                <TableHead>File</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -230,6 +243,31 @@ const Events = () => {
                   <TableCell>{event.date}</TableCell>
                   <TableCell>{event.location}</TableCell>
                   <TableCell className="max-w-xs truncate">{event.description}</TableCell>
+                  <TableCell>
+                    {event.file ? (
+                      <div className="flex items-center space-x-2">
+                        <FileText className="w-4 h-4 text-gray-500" />
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleFileView(event.file!)}
+                          className="text-blue-600 hover:text-blue-800 p-0 h-auto"
+                        >
+                          {event.file.name}
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleFileView(event.file!)}
+                          className="p-1 h-auto"
+                        >
+                          <Download className="w-3 h-3" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <span className="text-gray-400">No file</span>
+                    )}
+                  </TableCell>
                   <TableCell className="text-right">
                     <Button
                       variant="ghost"
@@ -307,12 +345,13 @@ const Events = () => {
               </div>
               
               <div className="grid gap-2">
-                <label htmlFor="file" className="text-sm font-medium">File Upload:</label>
+                <label htmlFor="file" className="text-sm font-medium">File Upload (PDF/DOC):</label>
                 <div className="flex gap-3 items-center">
                   <Input
                     id="file"
                     name="file"
                     type="file"
+                    accept=".pdf,.doc,.docx"
                     onChange={handleFileChange}
                     className="h-auto p-2 flex-1"
                   />
