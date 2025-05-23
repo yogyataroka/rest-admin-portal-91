@@ -12,6 +12,7 @@ import {
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import NepaliCalendar from '@/components/NepaliCalendar';
 import { useAuth } from '@/context/AuthContext';
+import { CalendarDays, MapPin } from 'lucide-react';
 
 const Dashboard = () => {
   const { notifications } = useAuth();
@@ -20,6 +21,34 @@ const Dashboard = () => {
   const [newMembers] = useState(21);
   const [upcomingEvents] = useState(3);
   const [completedEvents] = useState(36);
+
+  // Sample upcoming events data
+  const upcomingEventsData = [
+    {
+      id: 1,
+      date: '15',
+      month: 'May',
+      title: 'Community Meeting',
+      location: 'Ntc Hall, Chaunni',
+      time: '10:00 AM'
+    },
+    {
+      id: 2,
+      date: '22',
+      month: 'May',
+      title: 'Trip To Swoyambhu',
+      location: 'Swoyambhu',
+      time: '8:00 AM'
+    },
+    {
+      id: 3,
+      date: '28',
+      month: 'May',
+      title: 'Workshop',
+      location: 'Ntc Hall, Chaunni',
+      time: '2:00 PM'
+    }
+  ];
 
   // Simulate adding a notification when the dashboard loads
   const { addNotification } = useAuth();
@@ -67,6 +96,40 @@ const Dashboard = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Upcoming Events Section */}
+        <Card className="mb-6">
+          <CardContent className="p-6">
+            <h2 className="text-xl font-medium text-[#1E4E9D] mb-4">Upcoming Events</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {upcomingEventsData.map((event) => (
+                <Card key={event.id} className="border border-gray-200 hover:shadow-md transition-shadow">
+                  <CardContent className="p-4">
+                    <div className="flex items-start space-x-3">
+                      <div className="flex flex-col items-center bg-[#1E4E9D] text-white rounded-lg p-3 min-w-[60px]">
+                        <span className="text-lg font-bold">{event.date}</span>
+                        <span className="text-xs uppercase">{event.month}</span>
+                      </div>
+                      
+                      <div className="flex-1">
+                        <h3 className="font-medium text-gray-900 mb-2">{event.title}</h3>
+                        <div className="flex items-center text-gray-500 text-sm mb-1">
+                          <MapPin className="w-4 h-4 mr-1" />
+                          <span>{event.location}</span>
+                        </div>
+                        <div className="flex items-center text-gray-500 text-sm">
+                          <CalendarDays className="w-4 h-4 mr-1" />
+                          <span>{event.time}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
         
         {/* Notifications Section */}
         <Card className="mb-6">
