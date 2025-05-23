@@ -89,6 +89,18 @@ const NepaliCalendar: React.FC = () => {
     return events.filter(event => event.date === dateString);
   };
 
+  // Get upcoming events for current month
+  const getUpcomingEventsForMonth = () => {
+    return events.filter(event => {
+      const [year, month] = event.date.split('-');
+      return parseInt(year) === currentYear && parseInt(month) === currentMonth;
+    }).sort((a, b) => {
+      const dayA = parseInt(a.date.split('-')[2]);
+      const dayB = parseInt(b.date.split('-')[2]);
+      return dayA - dayB;
+    });
+  };
+
   const previousMonth = () => {
     if (currentMonth === 1) {
       setCurrentMonth(12);
@@ -143,6 +155,8 @@ const NepaliCalendar: React.FC = () => {
     });
   };
 
+  const upcomingEventsThisMonth = getUpcomingEventsForMonth();
+
   return (
     <Card>
       <CardContent className="p-6 space-y-4">
@@ -176,6 +190,31 @@ const NepaliCalendar: React.FC = () => {
             </h2>
           </div>
         </div>
+
+        {/* Upcoming Events for This Month */}
+        {upcomingEventsThisMonth.length > 0 && (
+          <div className="mb-4 bg-blue-50 p-4 rounded-lg">
+            <h3 className="text-lg font-medium text-[#1E4E9D] mb-3">
+              Events in {nepaliMonths[currentMonth - 1]} {currentYear}
+            </h3>
+            <div className="space-y-2">
+              {upcomingEventsThisMonth.map(event => {
+                const day = parseInt(event.date.split('-')[2]);
+                return (
+                  <div key={event.id} className="flex items-center space-x-3 p-2 bg-white rounded-md">
+                    <div className="bg-[#1E4E9D] text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">
+                      {day}
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-medium">{event.title}</div>
+                      {event.description && <div className="text-sm text-gray-600">{event.description}</div>}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
         
         {/* Calendar Grid */}
         <div className="border rounded-lg overflow-hidden">

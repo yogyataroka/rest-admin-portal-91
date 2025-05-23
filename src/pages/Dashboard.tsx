@@ -131,34 +131,6 @@ const Dashboard = () => {
           </CardContent>
         </Card>
         
-        {/* Notifications Section */}
-        <Card className="mb-6">
-          <CardContent className="p-6">
-            <h2 className="text-xl font-medium text-[#1E4E9D] mb-4">Recent Notifications</h2>
-            
-            {notifications.length > 0 ? (
-              <div className="space-y-3">
-                {notifications.slice(0, 5).map((notification) => (
-                  <div 
-                    key={notification.id} 
-                    className={`p-3 rounded-md ${notification.read ? 'bg-gray-100' : 'bg-blue-50 border-l-4 border-[#1E4E9D]'}`}
-                  >
-                    <h3 className="font-medium">{notification.title}</h3>
-                    <p className="text-sm text-gray-600">{notification.message}</p>
-                    <div className="text-xs text-gray-400 mt-1">
-                      {notification.timestamp.toLocaleTimeString()} - {notification.timestamp.toLocaleDateString()}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-8 text-gray-500">
-                No recent notifications
-              </div>
-            )}
-          </CardContent>
-        </Card>
-        
         {/* Nepali Calendar Section */}
         <div className="mt-6">
           <NepaliCalendar />
