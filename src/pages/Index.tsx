@@ -58,6 +58,7 @@ const Index = () => {
       <CardContent className="p-8">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-blue-800 mb-2">REST</h1>
+          <p className="text-xl text-blue-700">Admin Login</p>
         </div>
         
         <form onSubmit={handleLogin} className="space-y-6">
@@ -100,12 +101,13 @@ const Index = () => {
           </Button>
           
           <div className="text-center">
+            <span className="text-blue-600">Forgot password? </span>
             <button
               type="button"
               onClick={() => setCurrentPage('forgot')}
-              className="text-blue-600 hover:text-yellow-600 transition-colors"
+              className="text-yellow-600 hover:text-yellow-700 transition-colors"
             >
-              Forgot password? <span className="text-yellow-600">Click Here</span>
+              Click Here
             </button>
           </div>
         </form>

@@ -1,9 +1,30 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Bell } from 'lucide-react';
+import { Bell, UserCircle, ChevronDown, LogOut, Settings, Moon, Sun } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -12,11 +33,14 @@ interface DashboardLayoutProps {
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const location = useLocation();
   const { toast } = useToast();
-  const { logout } = useAuth();
+  const { logout, theme, toggleTheme, notifications } = useAuth();
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   
   const isActive = (path: string) => {
     return location.pathname === path ? 'text-yellow-400' : 'text-white';
   };
+
+  const unreadNotificationsCount = notifications.filter(n => !n.read).length;
   
   return (
     <div className="flex min-h-screen">
@@ -87,23 +111,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                     <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
                   </svg>
                 </span>
-                Setting
+                Settings
               </Link>
-            </li>
-            <li className="mt-12">
-              <button 
-                onClick={logout}
-                className="flex items-center text-xl font-medium text-white w-full"
-              >
-                <span className="inline-block w-6 mr-3">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                    <polyline points="16 17 21 12 16 7"></polyline>
-                    <line x1="21" y1="12" x2="9" y2="12"></line>
-                  </svg>
-                </span>
-                Logout
-              </button>
             </li>
           </ul>
         </nav>
@@ -112,28 +121,92 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         <header className="bg-white border-b p-4 flex justify-between items-center">
-          <div className="flex items-center">
-            <Button 
-              variant="ghost" 
-              className="p-2 mr-2 relative"
-              onClick={() => {
-                toast({
-                  title: "Notifications",
-                  description: "You have no new notifications."
-                });
-              }}
-            >
-              <Bell className="h-6 w-6" />
-              <span className="absolute top-1 right-1 bg-red-500 rounded-full w-2 h-2"></span>
-            </Button>
-          </div>
-          <div className="flex items-center">
-            <span className="mr-3">Admin Profile</span>
-            <img 
-              src="https://randomuser.me/api/portraits/men/32.jpg"
-              alt="Admin profile" 
-              className="w-10 h-10 rounded-full object-cover" 
-            />
+          <div className="flex-1"></div>
+          <div className="flex items-center space-x-4">
+            {/* Notification Bell */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  className="p-2 relative"
+                >
+                  <Bell className="h-6 w-6" />
+                  {unreadNotificationsCount > 0 && (
+                    <span className="absolute top-1 right-1 bg-red-500 rounded-full w-2 h-2"></span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80 p-0">
+                <div className="p-4 border-b">
+                  <h3 className="font-medium">Notifications</h3>
+                </div>
+                <div className="max-h-80 overflow-y-auto">
+                  {notifications.length > 0 ? (
+                    notifications.map((notification) => (
+                      <div 
+                        key={notification.id} 
+                        className={`p-4 border-b ${notification.read ? 'bg-white' : 'bg-blue-50'}`}
+                      >
+                        <h4 className="font-medium">{notification.title}</h4>
+                        <p className="text-sm text-gray-500">{notification.message}</p>
+                        <div className="flex justify-between items-center mt-2">
+                          <span className="text-xs text-gray-400">
+                            {notification.timestamp.toLocaleTimeString()}
+                          </span>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="p-4 text-center text-gray-500">
+                      No notifications
+                    </div>
+                  )}
+                </div>
+              </PopoverContent>
+            </Popover>
+
+            {/* Admin Profile Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="flex items-center gap-2">
+                  <img 
+                    src="https://randomuser.me/api/portraits/men/32.jpg"
+                    alt="Admin profile" 
+                    className="w-8 h-8 rounded-full object-cover" 
+                  />
+                  <span>Admin Profile</span>
+                  <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuItem className="cursor-pointer" onClick={() => navigate('/setting')}>
+                  <UserCircle className="mr-2 h-4 w-4" />
+                  <span>My Profile</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer" onClick={() => navigate('/setting')}>
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Settings</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer" onClick={toggleTheme}>
+                  {theme === 'light' ? (
+                    <>
+                      <Moon className="mr-2 h-4 w-4" />
+                      <span>Dark Mode</span>
+                    </>
+                  ) : (
+                    <>
+                      <Sun className="mr-2 h-4 w-4" />
+                      <span>Light Mode</span>
+                    </>
+                  )}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="cursor-pointer text-red-500" onClick={() => setShowLogoutDialog(true)}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Logout</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </header>
 
@@ -153,6 +226,29 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           <p>2025 REST. All Rights Reserved.</p>
         </footer>
       </div>
+
+      {/* Logout Confirmation Dialog */}
+      <Dialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Confirm Logout</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to log out of your account?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex justify-between">
+            <Button variant="outline" onClick={() => setShowLogoutDialog(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={() => {
+              setShowLogoutDialog(false);
+              logout();
+            }}>
+              Logout
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
