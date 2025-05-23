@@ -21,7 +21,29 @@ const NepaliCalendar: React.FC = () => {
   const { toast } = useToast();
   const [currentYear, setCurrentYear] = useState(2082);
   const [currentMonth, setCurrentMonth] = useState(2); // 1: Baisakh, 2: Jestha, etc.
-  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  
+  // Pre-populate with upcoming events from dashboard
+  const [events, setEvents] = useState<CalendarEvent[]>([
+    {
+      id: 1,
+      title: 'Community Meeting',
+      description: 'NTC Hall, Chaunni - 10:00 AM',
+      date: '2082-02-15'
+    },
+    {
+      id: 2,
+      title: 'Trip To Swoyambhu',
+      description: 'Swoyambhu - 8:00 AM',
+      date: '2082-02-22'
+    },
+    {
+      id: 3,
+      title: 'Workshop',
+      description: 'NTC Hall, Chaunni - 2:00 PM',
+      date: '2082-02-28'
+    }
+  ]);
+  
   const [newEvent, setNewEvent] = useState({
     title: '',
     description: '',
@@ -35,27 +57,23 @@ const NepaliCalendar: React.FC = () => {
     'Kartik', 'Mangsir', 'Poush', 'Magh', 'Falgun', 'Chaitra'
   ];
   
-  // English month mapping (for display purposes)
   const englishMonths = [
     'Apr/May', 'May/Jun', 'Jun/Jul', 'Jul/Aug', 'Aug/Sep', 'Sep/Oct',
     'Oct/Nov', 'Nov/Dec', 'Dec/Jan', 'Jan/Feb', 'Feb/Mar', 'Mar/Apr'
   ];
 
-  // Days in each Nepali month for 2082 BS (approx, simplified)
   const daysInMonth = [31, 31, 32, 31, 31, 30, 30, 29, 30, 29, 30, 30];
   
   // Generate calendar dates
   const calendarDates = useMemo(() => {
     const totalDays = daysInMonth[currentMonth - 1];
-    const firstDay = new Date(2025, currentMonth - 1, 1).getDay(); // Simplified mapping
+    const firstDay = new Date(2025, currentMonth - 1, 1).getDay();
     
     const dates = [];
-    // Empty cells for days before the 1st of the month
     for (let i = 0; i < firstDay; i++) {
       dates.push(null);
     }
     
-    // Days of the month
     for (let day = 1; day <= totalDays; day++) {
       dates.push(day);
     }
@@ -71,7 +89,6 @@ const NepaliCalendar: React.FC = () => {
     return events.filter(event => event.date === dateString);
   };
 
-  // Handle month navigation
   const previousMonth = () => {
     if (currentMonth === 1) {
       setCurrentMonth(12);
@@ -90,7 +107,6 @@ const NepaliCalendar: React.FC = () => {
     }
   };
 
-  // Handle adding a new event
   const handleAddEvent = () => {
     if (!activeDate || !newEvent.title) {
       toast({
@@ -117,12 +133,10 @@ const NepaliCalendar: React.FC = () => {
     });
   };
 
-  // Set the active date when a calendar cell is clicked
   const handleDateClick = (day: number) => {
     const dateString = `${currentYear}-${currentMonth.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
     setActiveDate(dateString);
     
-    // Populate the date field in the event form
     setNewEvent({
       ...newEvent,
       date: dateString
@@ -165,7 +179,6 @@ const NepaliCalendar: React.FC = () => {
         
         {/* Calendar Grid */}
         <div className="border rounded-lg overflow-hidden">
-          {/* Days of Week */}
           <div className="grid grid-cols-7 text-center font-medium border-b bg-gray-100">
             <div className="py-2">Sunday</div>
             <div className="py-2">Monday</div>
@@ -176,7 +189,6 @@ const NepaliCalendar: React.FC = () => {
             <div className="py-2">Saturday</div>
           </div>
           
-          {/* Calendar Cells */}
           <div className="grid grid-cols-7 text-center">
             {calendarDates.map((day, index) => {
               const dateEvents = day ? getEventsForDate(day) : [];
@@ -196,7 +208,6 @@ const NepaliCalendar: React.FC = () => {
                     <>
                       <div className="text-right">{day}</div>
                       
-                      {/* Event indicators */}
                       {dateEvents.length > 0 && (
                         <div className="absolute bottom-1 left-1 right-1">
                           <Popover>
