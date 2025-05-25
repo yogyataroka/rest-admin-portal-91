@@ -34,9 +34,6 @@ const Setting = () => {
     monthlyReportEmail: true,
   });
   
-  // Theme settings
-  const [theme, setTheme] = useState('light');
-  
   const handleProfilePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -95,14 +92,6 @@ const Setting = () => {
     toast({
       title: "Notification Settings Updated",
       description: "Your notification preferences have been saved.",
-    });
-  };
-  
-  const handleThemeChange = (newTheme: string) => {
-    setTheme(newTheme);
-    toast({
-      title: "Theme Changed",
-      description: `Theme has been changed to ${newTheme}.`,
     });
   };
 
@@ -283,35 +272,6 @@ const Setting = () => {
                   onCheckedChange={() => handleNotificationToggle('monthlyReportEmail')}
                 />
               </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Separator />
-        
-        {/* Theme Section */}
-        <Card>
-          <CardContent className="p-6 space-y-4">
-            <h2 className="text-2xl font-bold">Theme</h2>
-            
-            <div className="flex items-center gap-4">
-              <Button
-                type="button"
-                variant={theme === 'light' ? 'default' : 'outline'}
-                className={theme === 'light' ? 'bg-blue-600' : ''}
-                onClick={() => handleThemeChange('light')}
-              >
-                Light Mode
-              </Button>
-              
-              <Button
-                type="button"
-                variant={theme === 'dark' ? 'default' : 'outline'}
-                className={theme === 'dark' ? 'bg-blue-900' : ''}
-                onClick={() => handleThemeChange('dark')}
-              >
-                Dark Mode
-              </Button>
             </div>
           </CardContent>
         </Card>
