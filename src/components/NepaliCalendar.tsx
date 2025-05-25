@@ -9,18 +9,26 @@ import {
 } from '@/components/ui/popover';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
+import { 
+  nepaliMonths, 
+  englishEquivalents,
+  getDaysInNepaliMonth,
+  generateNepaliCalendarGrid,
+  getCurrentNepaliDate
+} from '@/utils/nepaliCalendar';
 
 interface CalendarEvent {
   id: number;
   title: string;
   description: string;
-  date: string; // YYYY-MM-DD
+  date: string; // YYYY-MM-DD format
 }
 
 const NepaliCalendar: React.FC = () => {
   const { toast } = useToast();
-  const [currentYear, setCurrentYear] = useState(2082);
-  const [currentMonth, setCurrentMonth] = useState(2); // 1: Baisakh, 2: Jestha, etc.
+  const currentNepaliDate = getCurrentNepaliDate();
+  const [currentYear, setCurrentYear] = useState(currentNepaliDate.year);
+  const [currentMonth, setCurrentMonth] = useState(currentNepaliDate.month);
   
   // Pre-populate with upcoming events from dashboard
   const [events, setEvents] = useState<CalendarEvent[]>([
@@ -51,35 +59,10 @@ const NepaliCalendar: React.FC = () => {
   });
   const [activeDate, setActiveDate] = useState<string | null>(null);
 
-  // Nepali month names
-  const nepaliMonths = [
-    'Baisakh', 'Jestha', 'Ashadh', 'Shrawan', 'Bhadra', 'Ashwin',
-    'Kartik', 'Mangsir', 'Poush', 'Magh', 'Falgun', 'Chaitra'
-  ];
-  
-  const englishMonths = [
-    'Apr/May', 'May/Jun', 'Jun/Jul', 'Jul/Aug', 'Aug/Sep', 'Sep/Oct',
-    'Oct/Nov', 'Nov/Dec', 'Dec/Jan', 'Jan/Feb', 'Feb/Mar', 'Mar/Apr'
-  ];
-
-  const daysInMonth = [31, 31, 32, 31, 31, 30, 30, 29, 30, 29, 30, 30];
-  
-  // Generate calendar dates
+  // Generate calendar dates using proper Nepali calendar system
   const calendarDates = useMemo(() => {
-    const totalDays = daysInMonth[currentMonth - 1];
-    const firstDay = new Date(2025, currentMonth - 1, 1).getDay();
-    
-    const dates = [];
-    for (let i = 0; i < firstDay; i++) {
-      dates.push(null);
-    }
-    
-    for (let day = 1; day <= totalDays; day++) {
-      dates.push(day);
-    }
-    
-    return dates;
-  }, [currentMonth]);
+    return generateNepaliCalendarGrid(currentYear, currentMonth);
+  }, [currentYear, currentMonth]);
 
   // Get events for the selected day
   const getEventsForDate = (day: number | null) => {
@@ -156,6 +139,8 @@ const NepaliCalendar: React.FC = () => {
   };
 
   const upcomingEventsThisMonth = getUpcomingEventsForMonth();
+  const currentMonthData = nepaliMonths[currentMonth - 1];
+  const daysInCurrentMonth = getDaysInNepaliMonth(currentYear, currentMonth);
 
   return (
     <Card>
@@ -178,7 +163,7 @@ const NepaliCalendar: React.FC = () => {
             </Button>
             <div className="flex items-center space-x-2">
               <span className="text-lg">{currentYear}</span>
-              <span className="text-lg">{nepaliMonths[currentMonth - 1]}</span>
+              <span className="text-lg">{currentMonthData.englishName}</span>
             </div>
             <Button variant="outline" size="sm" className="h-10 px-3" onClick={nextMonth}>
               »
@@ -186,8 +171,11 @@ const NepaliCalendar: React.FC = () => {
           </div>
           <div>
             <h2 className="text-xl font-medium text-red-600">
-              {currentYear} {nepaliMonths[currentMonth - 1]} | {englishMonths[currentMonth - 1]} {currentYear - 57}
+              {currentYear} {currentMonthData.englishName} | {englishEquivalents[currentMonth - 1]} {currentYear - 57}
             </h2>
+            <p className="text-sm text-gray-600">
+              {daysInCurrentMonth} days in this month
+            </p>
           </div>
         </div>
 
@@ -195,7 +183,7 @@ const NepaliCalendar: React.FC = () => {
         {upcomingEventsThisMonth.length > 0 && (
           <div className="mb-4 bg-blue-50 p-4 rounded-lg">
             <h3 className="text-lg font-medium text-[#1E4E9D] mb-3">
-              Events in {nepaliMonths[currentMonth - 1]} {currentYear}
+              Events in {currentMonthData.englishName} {currentYear}
             </h3>
             <div className="space-y-2">
               {upcomingEventsThisMonth.map(event => {
@@ -219,13 +207,13 @@ const NepaliCalendar: React.FC = () => {
         {/* Calendar Grid */}
         <div className="border rounded-lg overflow-hidden">
           <div className="grid grid-cols-7 text-center font-medium border-b bg-gray-100">
-            <div className="py-2">Sunday</div>
-            <div className="py-2">Monday</div>
-            <div className="py-2">Tuesday</div>
-            <div className="py-2">Wednesday</div>
-            <div className="py-2">Thursday</div>
-            <div className="py-2">Friday</div>
-            <div className="py-2">Saturday</div>
+            <div className="py-2">आइत</div>
+            <div className="py-2">सोम</div>
+            <div className="py-2">मंगल</div>
+            <div className="py-2">बुध</div>
+            <div className="py-2">बिहि</div>
+            <div className="py-2">शुक्र</div>
+            <div className="py-2">शनि</div>
           </div>
           
           <div className="grid grid-cols-7 text-center">
@@ -236,16 +224,24 @@ const NepaliCalendar: React.FC = () => {
                 null;
               
               const isActive = dateString === activeDate;
+              const isToday = day === currentNepaliDate.day && 
+                             currentMonth === currentNepaliDate.month && 
+                             currentYear === currentNepaliDate.year;
               
               return (
                 <div 
                   key={index} 
-                  className={`border p-1 h-20 relative ${isActive ? 'bg-blue-50' : ''}`}
+                  className={`border p-1 h-20 relative cursor-pointer hover:bg-gray-50 ${
+                    isActive ? 'bg-blue-50' : ''
+                  } ${isToday ? 'bg-green-50 border-green-300' : ''}`}
                   onClick={() => day && handleDateClick(day)}
                 >
                   {day && (
                     <>
-                      <div className="text-right">{day}</div>
+                      <div className={`text-right ${isToday ? 'font-bold text-green-700' : ''}`}>
+                        {day}
+                        {isToday && <div className="text-xs text-green-600">आज</div>}
+                      </div>
                       
                       {dateEvents.length > 0 && (
                         <div className="absolute bottom-1 left-1 right-1">
@@ -256,7 +252,7 @@ const NepaliCalendar: React.FC = () => {
                               </div>
                             </PopoverTrigger>
                             <PopoverContent className="w-64 p-2">
-                              <h4 className="font-medium mb-2">Events on {day} {nepaliMonths[currentMonth - 1]}</h4>
+                              <h4 className="font-medium mb-2">Events on {day} {currentMonthData.englishName}</h4>
                               <div className="space-y-2 max-h-40 overflow-y-auto">
                                 {dateEvents.map(event => (
                                   <div key={event.id} className="p-2 bg-gray-50 rounded">
@@ -281,7 +277,7 @@ const NepaliCalendar: React.FC = () => {
         {activeDate && (
           <div className="mt-4 bg-gray-50 p-4 rounded-lg">
             <h3 className="text-lg font-medium mb-2">
-              Add Event for {new Date(activeDate).getDate()} {nepaliMonths[currentMonth - 1]}
+              Add Event for {new Date(activeDate).getDate()} {currentMonthData.englishName}
             </h3>
             <div className="space-y-3">
               <div>
