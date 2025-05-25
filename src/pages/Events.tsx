@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import {
   Table,
@@ -47,6 +46,10 @@ const initialEvents: Event[] = [
     date: '2082-02-25',
     location: 'Swoyambhu',
     description: 'qwertyuiolaksgags xbukshdajadsjdksjdks',
+    file: {
+      name: 'tripItinerary.pdf',
+      url: '#',
+    },
   },
   {
     id: 3,
@@ -54,6 +57,10 @@ const initialEvents: Event[] = [
     date: '2082-02-25',
     location: 'Ntc Hall, Chaunni',
     description: 'qwertyuiolaksgags xbukshdajadsjdksjdks',
+    file: {
+      name: 'workshopMaterials.pdf',
+      url: '#',
+    },
   },
   {
     id: 4,
@@ -61,6 +68,10 @@ const initialEvents: Event[] = [
     date: '2082-02-25',
     location: 'Tribhuvan Park',
     description: 'qwertyuiolaksgags xbukshdajadsjdksjdks',
+    file: {
+      name: 'picnicDetails.pdf',
+      url: '#',
+    },
   },
   {
     id: 5,
@@ -68,6 +79,10 @@ const initialEvents: Event[] = [
     date: '2082-02-25',
     location: 'Ntc Hall, Chaunni',
     description: 'qwertyuiolaksgags xbukshdajadsjdksjdks',
+    file: {
+      name: 'gatheringInfo.pdf',
+      url: '#',
+    },
   },
 ];
 
