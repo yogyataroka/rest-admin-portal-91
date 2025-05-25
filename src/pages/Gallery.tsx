@@ -28,49 +28,63 @@ interface UnsplashImage {
 }
 
 const Gallery = () => {
-  // Sample gallery images
+  // Sample gallery images with uploaded images
   const [images, setImages] = useState<GalleryImage[]>([
     {
       id: 1,
-      url: 'https://source.unsplash.com/random/800x600/?event',
-      title: 'Annual Gathering 2082',
-      eventName: 'Annual Gathering',
+      url: '/lovable-uploads/82683fa9-92cf-4586-aae9-a5ab37a2ca74.png',
+      title: 'Board Meeting 2082',
+      eventName: 'Board Meeting',
       uploadDate: '2082-01-15',
     },
     {
       id: 2,
-      url: 'https://source.unsplash.com/random/800x600/?meeting',
-      title: 'Board Meeting',
-      eventName: 'Meeting',
+      url: '/lovable-uploads/d561e07c-ba55-4192-bf03-09bcd7bdb416.png',
+      title: 'Community Festival',
+      eventName: 'Festival',
       uploadDate: '2082-02-10',
     },
     {
       id: 3,
-      url: 'https://source.unsplash.com/random/800x600/?workshop',
-      title: 'Workshop on Digital Skills',
-      eventName: 'Workshop',
+      url: '/lovable-uploads/b94ba50d-dda9-4457-a30f-a5d35c765135.png',
+      title: 'Training Session',
+      eventName: 'Training',
       uploadDate: '2082-02-18',
     },
     {
       id: 4,
-      url: 'https://source.unsplash.com/random/800x600/?celebration',
+      url: '/lovable-uploads/be180318-6752-42f3-bbb1-a4b672bdfba2.png',
       title: 'New Year Celebration',
       eventName: 'Celebration',
       uploadDate: '2082-01-01',
     },
     {
       id: 5,
-      url: 'https://source.unsplash.com/random/800x600/?training',
-      title: 'Leadership Training',
-      eventName: 'Training',
+      url: '/lovable-uploads/7ba96550-d834-4b32-bafc-7337d6aeb7e4.png',
+      title: 'Workshop Session',
+      eventName: 'Workshop',
       uploadDate: '2082-02-25',
     },
     {
       id: 6,
-      url: 'https://source.unsplash.com/random/800x600/?picnic',
-      title: 'Department Picnic',
+      url: '/lovable-uploads/c63a614e-2bff-44a2-a5e7-c7b763531049.png',
+      title: 'Annual Picnic',
       eventName: 'Picnic',
       uploadDate: '2082-03-05',
+    },
+    {
+      id: 7,
+      url: 'https://source.unsplash.com/random/800x600/?event',
+      title: 'Annual Gathering 2082',
+      eventName: 'Annual Gathering',
+      uploadDate: '2082-01-20',
+    },
+    {
+      id: 8,
+      url: 'https://source.unsplash.com/random/800x600/?conference',
+      title: 'Digital Skills Conference',
+      eventName: 'Conference',
+      uploadDate: '2082-03-10',
     },
   ]);
 
