@@ -72,20 +72,6 @@ const Gallery = () => {
       eventName: 'Picnic',
       uploadDate: '2082-03-05',
     },
-    {
-      id: 7,
-      url: 'https://source.unsplash.com/random/800x600/?event',
-      title: 'Annual Gathering 2082',
-      eventName: 'Annual Gathering',
-      uploadDate: '2082-01-20',
-    },
-    {
-      id: 8,
-      url: 'https://source.unsplash.com/random/800x600/?conference',
-      title: 'Digital Skills Conference',
-      eventName: 'Conference',
-      uploadDate: '2082-03-10',
-    },
   ]);
 
   const [filter, setFilter] = useState('');
